@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FAF9F6;
+  --foreground: #1C1C1C;
+  --muted: #575757;
+  --border-custom: #E5E5E0;
+  --accent: #2A52BE;
+  --accent-success: #0F9D58;
+  --accent-alert: #D97706;
+}
+
+@theme {
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-mono: var(--font-mono), monospace;
+  --color-bg-base: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted);
+  --color-accent-cobalt: var(--accent);
+  --color-accent-success: var(--accent-success);
+  --color-accent-alert: var(--accent-alert);
+  --color-border-custom: var(--border-custom);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Custom Scroll Utilities & Lenis integration */
+html {
+  scroll-behavior: initial;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overflow: clip;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Typography Underline Animation Helper */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--accent);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}

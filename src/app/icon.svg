@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background -->
+  <rect width="32" height="32" rx="8" fill="#1C1C1C"/>
+  
+  <!-- Private variable code notation for Chandra Keshwar initials: _ck -->
+  <text 
+    x="50%" 
+    y="52%" 
+    dominant-baseline="middle" 
+    text-anchor="middle" 
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" 
+    font-size="14" 
+    font-weight="bold"
+  >
+    <tspan fill="#2A52BE">_</tspan><tspan fill="#FAF9F6">ck</tspan>
+  </text>
+</svg>
