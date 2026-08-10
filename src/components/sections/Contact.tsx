@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
+import { Mail, ArrowRight } from "lucide-react";
 
 // Inline brand SVGs for compatibility with Lucide React v1+
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
-    width="14"
-    height="14"
+    width="16"
+    height="16"
     stroke="currentColor"
     strokeWidth="2"
     fill="none"
@@ -23,8 +23,8 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
-    width="14"
-    height="14"
+    width="16"
+    height="16"
     stroke="currentColor"
     strokeWidth="2"
     fill="none"
@@ -39,9 +39,60 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function Contact() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 } as any
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
+    }
+  };
+
+  const links = [
+    {
+      label: "kanhaiyajaiswal1812@gmail.com",
+      href: "mailto:kanhaiyajaiswal1812@gmail.com",
+      icon: <Mail size={16} />,
+      primary: true
+    },
+    {
+      label: "GitHub Profile",
+      href: "https://github.com/Rudra554902y",
+      icon: <GithubIcon />,
+      primary: false
+    },
+    {
+      label: "LinkedIn Profile",
+      href: "https://linkedin.com/in/chandra-keshwar-jaiswal",
+      icon: <LinkedinIcon />,
+      primary: false
+    }
+  ];
+
   return (
-    <section id="contact" className="py-24 border-t border-border-custom bg-bg-base/20">
-      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <section id="contact" className="py-24 border-t border-border-custom bg-bg-base/20 relative overflow-hidden">
+      
+      {/* Decorative Technical Grid SVG in background */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1C1C1C" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
         
         {/* Left Column: Index tag */}
         <div className="lg:col-span-4">
@@ -50,46 +101,57 @@ export default function Contact() {
           </span>
         </div>
 
-        {/* Right Column: CTA & Details */}
-        <div className="lg:col-span-8 space-y-8">
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-text-primary font-sans leading-tight">
-            Have a system worth building?
-          </h2>
-          <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-sans font-light max-w-2xl">
-            If you are interested in backend systems architecture, real-time collaboration engines, custom synchronization protocols, or secure agent workflows, let's connect.
-          </p>
-
-          {/* Links Column */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6 pt-4">
-            <a
-              href="mailto:kanhaiyajaiswal1812@gmail.com"
-              className="inline-flex items-center space-x-3 bg-text-primary text-bg-base hover:bg-accent-cobalt px-6 py-4 text-xs font-semibold font-mono tracking-wider uppercase transition-colors duration-300"
+        {/* Right Column: CTA & Links */}
+        <div className="lg:col-span-8 space-y-10">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="space-y-6"
+          >
+            <motion.h2
+              variants={itemVariants}
+              className="text-3.5xl sm:text-5xl font-semibold tracking-tight text-text-primary font-sans leading-tight uppercase"
             >
-              <Mail size={14} />
-              <span>kanhaiyajaiswal1812@gmail.com ➔</span>
-            </a>
+              Let&apos;s build something useful.
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              className="text-sm sm:text-base text-text-secondary leading-relaxed font-sans font-light max-w-xl"
+            >
+              If you are interested in distributed state architectures, async webhook handlers, AST-based optimizations, or secure tools integration, get in touch.
+            </motion.p>
+          </motion.div>
 
-            <div className="flex items-center space-x-6">
+          {/* Interactive Links Container */}
+          <div className="flex flex-col space-y-4 max-w-md">
+            {links.map((link) => (
               <a
-                href="https://github.com/Rudra554902y"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-1.5 text-xs font-semibold font-mono text-text-secondary hover:text-text-primary hover:text-accent-cobalt transition-colors duration-200"
+                key={link.label}
+                href={link.href}
+                target={link.primary ? undefined : "_blank"}
+                rel={link.primary ? undefined : "noopener noreferrer"}
+                className={`flex items-center justify-between p-4 border rounded-sm transition-all duration-300 group min-h-[56px] ${
+                  link.primary
+                    ? "border-text-primary bg-text-primary text-bg-base hover:bg-accent-cobalt hover:border-accent-cobalt"
+                    : "border-border-custom bg-bg-base/50 text-text-primary hover:border-text-primary"
+                }`}
               >
-                <GithubIcon />
-                <span>GitHub ↗</span>
+                <div className="flex items-center space-x-3">
+                  <span className="group-hover:scale-105 group-hover:text-accent-cobalt transition-all duration-300">
+                    {link.icon}
+                  </span>
+                  <span className="text-xs sm:text-sm font-mono tracking-tight font-semibold">
+                    {link.label}
+                  </span>
+                </div>
+                <ArrowRight
+                  size={14}
+                  className="transform -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300"
+                />
               </a>
-
-              <a
-                href="https://linkedin.com/in/chandra-keshwar-jaiswal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-1.5 text-xs font-semibold font-mono text-text-secondary hover:text-text-primary hover:text-accent-cobalt transition-colors duration-200"
-              >
-                <LinkedinIcon />
-                <span>LinkedIn ↗</span>
-              </a>
-            </div>
+            ))}
           </div>
         </div>
 

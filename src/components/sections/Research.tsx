@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, ShieldCheck, Link2 } from "lucide-react";
+import { BookOpen, ShieldCheck, ArrowRight } from "lucide-react";
 import { publications } from "@/data/publications";
 
 export default function Research() {
@@ -14,7 +14,7 @@ export default function Research() {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
@@ -52,18 +52,20 @@ export default function Research() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="space-y-8"
+            className="space-y-6"
           >
             {publications.map((pub) => (
               <motion.div
                 key={pub.title}
                 variants={cardVariants}
-                className="border border-border-custom bg-bg-base/30 p-6 rounded-sm space-y-4 hover:border-text-primary transition-colors duration-300"
+                whileHover={{ y: -3, borderColor: "#1C1C1C" }}
+                transition={{ duration: 0.3 }}
+                className="border border-border-custom bg-bg-base/30 p-6 rounded-sm space-y-4 shadow-sm relative group cursor-pointer"
               >
                 {/* Paper Header */}
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-2 text-[10px] font-mono text-accent-cobalt font-semibold uppercase tracking-wider">
-                    <BookOpen size={12} />
+                  <div className="flex items-center space-x-2 text-[9px] font-mono text-text-secondary group-hover:text-accent-cobalt transition-colors duration-300 uppercase tracking-wider">
+                    <BookOpen size={12} className="text-text-secondary group-hover:text-accent-cobalt transition-colors duration-300" />
                     <span>{pub.venue} &middot; {pub.date}</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-text-primary font-sans leading-tight">
@@ -72,7 +74,7 @@ export default function Research() {
                 </div>
 
                 {/* Authors */}
-                <p className="text-[11px] font-mono text-text-secondary uppercase">
+                <p className="text-[10px] font-mono text-text-secondary uppercase">
                   Authors: {pub.authors}
                 </p>
 
@@ -87,10 +89,13 @@ export default function Research() {
                     href={pub.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-1 text-xs font-mono font-bold text-accent-cobalt hover:underline"
+                    className="inline-flex items-center space-x-2 text-xs font-mono font-bold text-accent-cobalt group-hover:underline"
                   >
-                    <Link2 size={12} />
-                    <span>DOI: {pub.doi} ↗</span>
+                    <span>DOI: {pub.doi}</span>
+                    <ArrowRight 
+                      size={12} 
+                      className="group-hover:translate-x-1 transition-transform duration-300 text-accent-cobalt" 
+                    />
                   </a>
                 </div>
 

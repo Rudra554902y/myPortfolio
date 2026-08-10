@@ -1,36 +1,99 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function About() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 } as any
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
+    }
+  };
+
   return (
     <section id="about" className="py-24 border-t border-border-custom bg-bg-base">
-      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
-        {/* Left Column: Index tag */}
-        <div className="lg:col-span-4">
-          <span className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase block">
-            08 / About Me
-          </span>
+        {/* LEFT COLUMN: Photo / Personal Visual */}
+        <div className="lg:col-span-5 flex justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="relative w-full max-w-[280px] aspect-[4/5] border border-border-custom p-3 bg-bg-base shadow-sm"
+          >
+            <div className="w-full h-full overflow-hidden rounded-sm relative bg-stone-100">
+              <Image
+                src="/Chandra_Keshwar_Jaiswal_CSE.png"
+                alt="Chandra Keshwar Jaiswal portrait"
+                fill
+                className="object-cover object-center grayscale contrast-[1.05]"
+              />
+            </div>
+            
+            {/* Technical layout print details */}
+            <div className="absolute -bottom-6 left-0 text-[8px] font-mono text-text-secondary select-none">
+              LOC: ALLENHOUSE &middot; DRDO LABS
+            </div>
+            <div className="absolute -bottom-6 right-0 text-[8px] font-mono text-accent-cobalt select-none">
+              SYS_REF_2026
+            </div>
+          </motion.div>
         </div>
 
-        {/* Right Column: Narrative */}
-        <div className="lg:col-span-8 space-y-6">
-          <h2 className="text-3xl font-semibold tracking-tight text-text-primary font-sans leading-tight">
-            Engineering software systems with clean architecture.
-          </h2>
+        {/* RIGHT COLUMN: Personal Narrative */}
+        <div className="lg:col-span-7">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="space-y-6"
+          >
+            <motion.span
+              variants={itemVariants}
+              className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase block"
+            >
+              08 / Biography
+            </motion.span>
 
-          <div className="space-y-4 text-sm sm:text-base text-text-secondary leading-relaxed font-sans font-light max-w-2xl">
-            <p>
-              I am a final-year Computer Science Engineering student at Allenhouse Institute of Technology and a former research intern at the Defence Research and Development Organisation (DRDO). I spend my time understanding how software systems handle concurrent state, load files securely, and schedule background operations.
-            </p>
-            <p>
-              Rather than treating AI as a black box or building simple chat wrappers, I focus on the software ecosystem around language models. I build real-time synchronization pipelines for browser editors, AST parsers to chunk source code, and task workers to offload calculations.
-            </p>
-            <p>
-              My goal is to construct robust, performant backend architectures where AI models, local vector stores, task queues, and human verification gates work together. I believe software complexity should be managed with clear design choices and explicit validation boundaries.
-            </p>
-          </div>
+            <motion.h2
+              variants={itemVariants}
+              className="text-3xl font-semibold tracking-tight text-text-primary font-sans leading-tight"
+            >
+              Engineering software systems with clean architecture.
+            </motion.h2>
+
+            <div className="space-y-6 text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-light max-w-xl">
+              <motion.p variants={itemVariants}>
+                I am a final-year Computer Science Engineering student at Allenhouse Institute of Technology and a former research intern at the Defence Research and Development Organisation (DRDO). I spend my time understanding how software systems handle concurrent state, load files securely, and schedule background operations.
+              </motion.p>
+              
+              <motion.p variants={itemVariants}>
+                <strong>What I build:</strong> I focus on the software ecosystem around language models. I build real-time synchronization pipelines for browser editors, AST parsers to chunk source code, and task workers to offload calculations.
+              </motion.p>
+
+              <motion.p variants={itemVariants}>
+                <strong>What I am currently exploring:</strong> Distributed hash caching algorithms, Model Context Protocol configurations for local tool security, and post-quantum multivariate authentication structures.
+              </motion.p>
+
+              <motion.p variants={itemVariants}>
+                <strong>What motivates my work:</strong> I believe software complexity should be managed with clear design choices and explicit validation boundaries. I enjoy creating environment controls where code is verified before execution.
+              </motion.p>
+            </div>
+          </motion.div>
         </div>
 
       </div>
