@@ -1,40 +1,10 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Calendar, Tag, Award } from "lucide-react";
 import { achievements } from "@/data/achievements";
 
 export default function Achievements() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Track scroll progress through the achievements container
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Map scroll progress to scaleY of the timeline line
-  const scaleY = useTransform(scrollYProgress, [0.1, 0.75], [0, 1]);
-
-  const cardLeftVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
-    }
-  };
-
-  const cardRightVariants = {
-    hidden: { opacity: 0, x: 30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
-    }
-  };
-
   return (
     <section id="achievements" className="py-24 border-t border-border-custom bg-bg-base/20">
       <div className="max-w-6xl mx-auto px-6 space-y-16">
@@ -52,96 +22,19 @@ export default function Achievements() {
           </p>
         </div>
 
-        {/* Timeline Container */}
-        <div ref={containerRef} className="relative pt-8 pb-8">
-          
-          {/* Central Connecting Line (Desktop) / Left Line (Mobile) */}
-          <motion.div
-            style={{ scaleY, originY: 0 }}
-            className="absolute left-[13px] md:left-1/2 top-4 bottom-4 w-[2px] bg-accent-cobalt z-0"
-          />
-
-          {/* Timeline Items */}
-          <div className="space-y-16 relative">
-            {achievements.map((item, idx) => {
-              const isEven = idx % 2 === 0;
-              
-              return (
-                <div key={item.title} className="relative min-h-[140px]">
-                  
-                  {/* Timeline Dot (Node) */}
-                  <motion.div
-                    initial={{ scale: 0.8, backgroundColor: "#FAF9F6" }}
-                    whileInView={{ scale: 1.1, backgroundColor: "#FAF9F6" }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    className="absolute left-1 md:left-1/2 top-6 transform -translate-x-[2px] md:-translate-x-1/2 z-10 w-6 h-6 rounded-full border border-accent-cobalt flex items-center justify-center shadow-sm"
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ delay: 0.2 }}
-                      className="w-2 h-2 rounded-full bg-accent-cobalt"
-                    />
-                  </motion.div>
-
-                  {/* Responsive Row Grid Layout */}
-                  {/* Desktop Layout: Alternating left and right */}
-                  <div className="hidden md:grid grid-cols-12 gap-8 items-start w-full">
-                    
-                    {/* Left Column Card (Odd indices) */}
-                    <div className="col-span-5 text-right">
-                      {!isEven && (
-                        <motion.div
-                          variants={cardLeftVariants}
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true, margin: "-100px" }}
-                          className="border border-border-custom bg-bg-base p-6 rounded-sm space-y-3 shadow-sm hover:border-text-primary transition-colors duration-300 inline-block text-left w-full"
-                        >
-                          <MilestoneCardContent item={item} />
-                        </motion.div>
-                      )}
-                    </div>
-
-                    {/* Gap for Central Line */}
-                    <div className="col-span-2" />
-
-                    {/* Right Column Card (Even indices) */}
-                    <div className="col-span-5">
-                      {isEven && (
-                        <motion.div
-                          variants={cardRightVariants}
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true, margin: "-100px" }}
-                          className="border border-border-custom bg-bg-base p-6 rounded-sm space-y-3 shadow-sm hover:border-text-primary transition-colors duration-300 w-full"
-                        >
-                          <MilestoneCardContent item={item} />
-                        </motion.div>
-                      )}
-                    </div>
-
-                  </div>
-
-                  {/* Mobile Layout: Left aligned, cards always on the right */}
-                  <div className="md:hidden pl-10 w-full">
-                    <motion.div
-                      variants={cardRightVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, margin: "-100px" }}
-                      className="border border-border-custom bg-bg-base p-5 rounded-sm space-y-3 shadow-sm"
-                    >
-                      <MilestoneCardContent item={item} />
-                    </motion.div>
-                  </div>
-
-                </div>
-              );
-            })}
-          </div>
-
+        {/* Timeline row sequence */}
+        <div className="relative space-y-16">
+          {achievements.map((item, idx) => {
+            const isEven = idx % 2 === 0;
+            return (
+              <TimelineRow
+                key={item.title}
+                item={item}
+                isEven={isEven}
+                isLast={idx === achievements.length - 1}
+              />
+            );
+          })}
         </div>
 
       </div>
@@ -149,8 +42,122 @@ export default function Achievements() {
   );
 }
 
-// Sub-component for Card Content to avoid duplicate code
-function MilestoneCardContent({ item }: { item: typeof achievements[0] }) {
+// ------------------------------------------------------------------
+// Viewport-staggered Row Component (Sequential runtime assembly)
+// ------------------------------------------------------------------
+
+interface TimelineRowProps {
+  item: typeof achievements[0];
+  isEven: boolean;
+  isLast: boolean;
+}
+
+function TimelineRow({ item, isEven, isLast }: TimelineRowProps) {
+  // Stagger variants for sequential build
+  const rowVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.15
+      } as any
+    }
+  };
+
+  const lineVariants = {
+    hidden: { scaleY: 0 },
+    visible: {
+      scaleY: 1,
+      transition: { duration: 0.4, ease: "linear" } as any
+    }
+  };
+
+  const dotVariants = {
+    hidden: { scale: 0 },
+    visible: {
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeOut" } as any
+    }
+  };
+
+  const cardVariants = (xOffset: number) => ({
+    hidden: { opacity: 0, y: 30, x: xOffset },
+    visible: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } as any
+    }
+  });
+
+  return (
+    <motion.div
+      variants={rowVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-120px" }}
+      className="relative min-h-[140px]"
+    >
+      {/* 1. Timeline Line Segment (Desktop Center, Mobile Left) */}
+      {!isLast && (
+        <motion.div
+          variants={lineVariants}
+          className="absolute left-[13px] md:left-1/2 top-6 bottom-[-64px] w-[2px] bg-accent-cobalt z-0 origin-top"
+        />
+      )}
+
+      {/* 2. Marker Dot (Node appears after line draws) */}
+      <motion.div
+        variants={dotVariants}
+        className="absolute left-1 md:left-1/2 top-6 transform -translate-x-[2px] md:-translate-x-1/2 z-10 w-6 h-6 rounded-full border border-accent-cobalt bg-bg-base flex items-center justify-center shadow-sm"
+      >
+        <div className="w-2 h-2 rounded-full bg-accent-cobalt" />
+      </motion.div>
+
+      {/* Desktop alternating cards */}
+      <div className="hidden md:grid grid-cols-12 gap-8 items-start w-full">
+        {/* Left Side */}
+        <div className="col-span-5 text-right">
+          {!isEven && (
+            <motion.div
+              variants={cardVariants(-30)}
+              className="border border-border-custom bg-bg-base p-6 rounded-sm space-y-3 shadow-sm hover:border-text-primary transition-colors duration-300 inline-block text-left w-full"
+            >
+              <MilestoneContent item={item} />
+            </motion.div>
+          )}
+        </div>
+
+        {/* Center alignment spacer */}
+        <div className="col-span-2" />
+
+        {/* Right Side */}
+        <div className="col-span-5">
+          {isEven && (
+            <motion.div
+              variants={cardVariants(30)}
+              className="border border-border-custom bg-bg-base p-6 rounded-sm space-y-3 shadow-sm hover:border-text-primary transition-colors duration-300 w-full"
+            >
+              <MilestoneContent item={item} />
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile left-aligned layout */}
+      <div className="md:hidden pl-10 w-full">
+        <motion.div
+          variants={cardVariants(20)}
+          className="border border-border-custom bg-bg-base p-5 rounded-sm space-y-3 shadow-sm"
+        >
+          <MilestoneContent item={item} />
+        </motion.div>
+      </div>
+
+    </motion.div>
+  );
+}
+
+function MilestoneContent({ item }: { item: typeof achievements[0] }) {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2 text-[9px] font-mono text-text-secondary uppercase">

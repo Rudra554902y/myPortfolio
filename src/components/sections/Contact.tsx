@@ -40,15 +40,22 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function Contact() {
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: { staggerChildren: 0.15 } as any
     }
   };
 
+  const lineVariants = {
+    hidden: { scaleX: 0 },
+    visible: {
+      scaleX: 1,
+      transition: { duration: 0.8, ease: "easeInOut" } as any
+    }
+  };
+
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
@@ -80,7 +87,7 @@ export default function Contact() {
   return (
     <section id="contact" className="py-24 border-t border-border-custom bg-bg-base/20 relative overflow-hidden">
       
-      {/* Decorative Technical Grid SVG in background */}
+      {/* Decorative Technical Grid */}
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -92,40 +99,57 @@ export default function Contact() {
         </svg>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+      {/* Sequential Build Wrapper */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10"
+      >
         
         {/* Left Column: Index tag */}
         <div className="lg:col-span-4">
-          <span className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase block">
+          <motion.span
+            variants={itemVariants}
+            className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase block"
+          >
             09 / Contact
-          </span>
+          </motion.span>
         </div>
 
-        {/* Right Column: CTA & Links */}
+        {/* Right Column: Title -> Copy -> Links */}
         <div className="lg:col-span-8 space-y-10">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="space-y-6"
-          >
+          
+          {/* Top Thin Border Line (1st to build) */}
+          <div className="relative w-full h-[1px] bg-border-custom origin-left">
+            <motion.div
+              variants={lineVariants}
+              className="absolute inset-0 bg-accent-cobalt"
+            />
+          </div>
+
+          <div className="space-y-6">
             <motion.h2
               variants={itemVariants}
               className="text-3.5xl sm:text-5xl font-semibold tracking-tight text-text-primary font-sans leading-tight uppercase"
             >
               Let&apos;s build something useful.
             </motion.h2>
+            
             <motion.p
               variants={itemVariants}
               className="text-sm sm:text-base text-text-secondary leading-relaxed font-sans font-light max-w-xl"
             >
               If you are interested in distributed state architectures, async webhook handlers, AST-based optimizations, or secure tools integration, get in touch.
             </motion.p>
-          </motion.div>
+          </div>
 
-          {/* Interactive Links Container */}
-          <div className="flex flex-col space-y-4 max-w-md">
+          {/* Links Container */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col space-y-4 max-w-md"
+          >
             {links.map((link) => (
               <a
                 key={link.label}
@@ -152,10 +176,19 @@ export default function Contact() {
                 />
               </a>
             ))}
-          </div>
+          </motion.div>
+
+          {/* Small closing technical marker */}
+          <motion.div
+            variants={itemVariants}
+            className="pt-6 text-[8px] font-mono text-text-secondary select-none tracking-widest uppercase"
+          >
+            [STATUS: WAITING_FOR_CONNECTION] &middot; SYS_HALT
+          </motion.div>
+
         </div>
 
-      </div>
+      </motion.div>
     </section>
   );
 }

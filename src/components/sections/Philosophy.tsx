@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowRight, Shield, Database, RefreshCw, Cpu, GitBranch, CheckCircle, Terminal } from "lucide-react";
+import { ChevronDown, Shield, Database, RefreshCw, Cpu, GitBranch, CheckCircle, Terminal } from "lucide-react";
 
 export default function Philosophy() {
   const [activeStep, setActiveStep] = useState(0);
@@ -99,16 +99,66 @@ export default function Philosophy() {
     }
   ];
 
+  // Section-level reveal pattern (Rising panel variant)
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
+    }
+  };
+
+  const concernContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 } as any
+    }
+  };
+
+  const concernRowVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" } as any
+    }
+  };
+
   return (
-    <section id="systems" className="py-24 border-t border-border-custom bg-bg-base">
+    <motion.section
+      id="systems"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-120px" }}
+      variants={sectionVariants}
+      className="py-24 border-t border-border-custom bg-bg-base"
+    >
       <div className="max-w-6xl mx-auto px-6 space-y-28">
         
-        {/* PART 1: BEYOND THE MODEL LAYERS (INTERACTIVE SCROLL EXPERIENCE) */}
-        <div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* PART 1: BEYOND THE MODEL LAYERS (SCROLL STAGED PIPELINE) */}
+        <div className="space-y-12">
+          {/* Headline narrative */}
+          <div className="space-y-4 max-w-lg">
+            <span className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase">
+              01 / Engineering Philosophy
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-text-primary font-sans leading-tight">
+              Beyond the Model.
+            </h2>
+            <p className="text-xs sm:text-sm text-text-secondary font-sans font-light leading-relaxed">
+              A large language model is only one component of an intelligent system. 
+              The engineering around it determines how context is retrieved, state is maintained, actions are executed, workflows are coordinated, and results are validated.
+            </p>
+          </div>
+
+          {/* Desktop: Split column layout with sticky left visualization and scrolling right text */}
+          <div className="hidden lg:grid grid-cols-12 gap-12 items-start relative">
             
-            {/* Left Column: Sticky Visual Panel (Desktop only, hidden on mobile) */}
-            <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-32 h-[380px] border border-border-custom bg-bg-base/30 p-6 rounded-sm space-y-4">
+            {/* Left Column: Sticky Visual Panel */}
+            <div className="lg:col-span-5 lg:sticky lg:top-32 h-[380px] border border-border-custom bg-bg-base/30 p-6 rounded-sm space-y-4">
               <div className="flex items-center justify-between text-[10px] font-mono text-text-secondary uppercase">
                 <span>Execution Pipeline Visual</span>
                 <span className="text-accent-cobalt font-bold">Layer 0{activeStep + 1}</span>
@@ -142,79 +192,90 @@ export default function Philosophy() {
               </div>
             </div>
 
-            {/* Right Column: Scroll Content (MODEL, CONTEXT, etc.) */}
-            <div className="lg:col-span-7 space-y-12">
-              <div className="space-y-4 max-w-lg lg:pb-8">
-                <span className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase">
-                  01 / Engineering Philosophy
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-text-primary font-sans leading-tight">
-                  Beyond the Model.
-                </h2>
-                <p className="text-sm text-text-secondary font-sans font-light leading-relaxed">
-                  A large language model is only one component of an intelligent system. 
-                  The engineering around it determines how context is retrieved, state is maintained, actions are executed, workflows are coordinated, and results are validated.
-                </p>
-              </div>
+            {/* Right Column: Scroll triggers */}
+            <div className="lg:col-span-7 space-y-16 pl-4 relative">
+              {/* Central vertical track line */}
+              <div className="absolute left-[13px] top-4 bottom-4 w-[1px] bg-border-custom" />
 
-              {/* Vertical sequence - triggers active step in sticky panel */}
-              <div className="relative pl-2 lg:pl-0 space-y-8">
-                {/* Connecting line */}
-                <div className="absolute left-[13px] top-4 bottom-4 w-[1px] bg-border-custom" />
+              {steps.map((step, idx) => {
+                const isActive = activeStep === idx;
+                return (
+                  <motion.div
+                    key={step.title}
+                    onViewportEnter={() => setActiveStep(idx)}
+                    viewport={{ margin: "-180px 0px -180px 0px" }}
+                    className="flex items-start space-x-6 relative pl-2 group cursor-pointer"
+                    onClick={() => setActiveStep(idx)}
+                  >
+                    {/* Circle Node */}
+                    <div className={`relative z-10 w-6 h-6 rounded-full bg-bg-base border transition-all duration-300 flex items-center justify-center ${
+                      isActive ? "border-accent-cobalt scale-110 shadow-sm" : "border-border-custom group-hover:border-text-secondary"
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                        isActive ? "bg-accent-cobalt" : "bg-text-secondary group-hover:bg-text-primary"
+                      }`} />
+                    </div>
 
-                {steps.map((step, idx) => {
-                  const isActive = activeStep === idx;
-                  return (
-                    <motion.div
-                      key={step.title}
-                      onViewportEnter={() => setActiveStep(idx)}
-                      viewport={{ margin: "-180px 0px -180px 0px" }}
-                      className="flex items-start space-x-6 relative pl-2 group cursor-pointer"
-                      onClick={() => setActiveStep(idx)}
-                    >
-                      {/* Interactive dot node */}
-                      <div className={`relative z-10 w-6 h-6 rounded-full bg-bg-base border transition-all duration-300 flex items-center justify-center ${
-                        isActive ? "border-accent-cobalt scale-110 shadow-sm" : "border-border-custom group-hover:border-text-secondary"
-                      }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                          isActive ? "bg-accent-cobalt" : "bg-text-secondary group-hover:bg-text-primary"
-                        }`} />
-                      </div>
-
-                      {/* Content block */}
-                      <div className="space-y-1 flex-1">
-                        <div className="flex items-baseline space-x-4">
-                          <h3 className={`text-sm font-mono font-bold tracking-wider transition-colors duration-300 ${
-                            isActive ? "text-accent-cobalt" : "text-text-primary"
-                          }`}>
-                            {step.title}
-                          </h3>
-                          <span className="text-[9px] font-mono text-text-secondary uppercase">
-                            Layer 0{idx + 1}
-                          </span>
-                        </div>
-                        <p className={`text-xs sm:text-sm leading-relaxed font-sans transition-all duration-300 ${
-                          isActive ? "text-text-primary font-normal" : "text-text-secondary font-light"
+                    {/* Text block */}
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-baseline space-x-4">
+                        <h3 className={`text-sm font-mono font-bold tracking-wider transition-colors duration-300 ${
+                          isActive ? "text-accent-cobalt" : "text-text-primary"
                         }`}>
-                          {step.desc}
-                        </p>
-                        {/* Mobile active pill */}
-                        <div className="lg:hidden mt-2">
-                          <span className="inline-block text-[8px] font-mono text-accent-cobalt bg-accent-cobalt/5 border border-accent-cobalt/10 px-2 py-0.5 rounded-sm">
-                            {step.technical}
-                          </span>
-                        </div>
+                          {step.title}
+                        </h3>
+                        <span className="text-[9px] font-mono text-text-secondary uppercase">
+                          Layer 0{idx + 1}
+                        </span>
                       </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                      <p className={`text-xs sm:text-sm leading-relaxed font-sans transition-all duration-300 ${
+                        isActive ? "text-text-primary font-normal" : "text-text-secondary font-light"
+                      }`}>
+                        {step.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
           </div>
+
+          {/* Mobile & Tablet: Sticky stacked cards sequence */}
+          <div className="lg:hidden space-y-4 relative">
+            {steps.map((step, idx) => (
+              <div
+                key={step.title}
+                className="sticky top-20 bg-bg-base border border-border-custom p-6 rounded-sm shadow-md space-y-4"
+                style={{ top: `${80 + idx * 8}px`, zIndex: idx }}
+              >
+                <div className="flex items-center justify-between text-[9px] font-mono text-accent-cobalt font-bold uppercase">
+                  <span>Layer 0{idx + 1} &middot; {step.title}</span>
+                  <span className="text-text-secondary font-normal border border-border-custom px-1.5 py-0.5 rounded-sm">
+                    {step.technical}
+                  </span>
+                </div>
+                
+                <p className="text-xs sm:text-sm text-text-primary font-sans leading-relaxed">
+                  {step.desc}
+                </p>
+
+                {/* Sub-visual representation container */}
+                <div className="bg-stone-50 border border-border-custom/40 rounded p-4 flex items-center justify-center overflow-hidden min-h-[140px]">
+                  {idx === 0 && <ModelVisual />}
+                  {idx === 1 && <ContextVisual />}
+                  {idx === 2 && <StateVisual />}
+                  {idx === 3 && <ToolsVisual />}
+                  {idx === 4 && <WorkflowVisual />}
+                  {idx === 5 && <ValidationVisual />}
+                  {idx === 6 && <ResultVisual />}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* PART 2: HOW I THINK ABOUT SYSTEMS (INTERACTIVE ROW ACCORDION) */}
+        {/* PART 2: HOW I THINK ABOUT SYSTEMS (STAGGERED PANELS ACCORDION) */}
         <div className="border-t border-border-custom pt-24 space-y-12">
           <div className="space-y-4 max-w-2xl">
             <span className="text-[10px] font-mono tracking-widest text-accent-cobalt uppercase">
@@ -228,21 +289,27 @@ export default function Philosophy() {
             </p>
           </div>
 
-          {/* Accordion Rows */}
-          <div className="divide-y divide-border-custom border-t border-b border-border-custom">
+          {/* Accordion Rows - Staggered panels entrance */}
+          <motion.div
+            variants={concernContainerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="divide-y divide-border-custom border-t border-b border-border-custom"
+          >
             {concerns.map((con) => {
               const isExpanded = expandedConcern === con.id;
               return (
-                <div
+                <motion.div
                   key={con.id}
+                  variants={concernRowVariants}
                   className="hover:bg-stone-50/50 transition-colors duration-200"
                 >
-                  {/* Accordion Header Row */}
+                  {/* Row Trigger */}
                   <button
                     onClick={() => setExpandedConcern(isExpanded ? null : con.id)}
                     className="w-full text-left py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-2 group cursor-pointer focus:outline-none focus:bg-stone-50"
                   >
-                    {/* ID and Title */}
                     <div className="md:col-span-4 flex items-baseline space-x-4">
                       <span className="text-xs font-mono text-accent-cobalt font-bold group-hover:translate-x-0.5 transition-transform duration-200">
                         {con.num}
@@ -258,14 +325,12 @@ export default function Philosophy() {
                       </div>
                     </div>
 
-                    {/* Summary Description */}
                     <div className="md:col-span-7">
                       <p className="text-xs sm:text-sm text-text-secondary font-sans font-light leading-relaxed">
                         {con.desc}
                       </p>
                     </div>
 
-                    {/* Expand Arrow Indicator */}
                     <div className="md:col-span-1 flex justify-end">
                       <ChevronDown
                         size={16}
@@ -276,7 +341,7 @@ export default function Philosophy() {
                     </div>
                   </button>
 
-                  {/* Accordion Expandable Content Panel */}
+                  {/* Expand Panel Content */}
                   <AnimatePresence initial={false}>
                     {isExpanded && (
                       <motion.div
@@ -287,7 +352,6 @@ export default function Philosophy() {
                         className="overflow-hidden"
                       >
                         <div className="px-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm border-t border-border-custom/50 pt-6">
-                          {/* Col 1: Why it matters */}
                           <div className="space-y-2">
                             <h4 className="font-mono text-[9px] text-text-secondary uppercase tracking-widest font-bold">
                               Why it matters
@@ -296,7 +360,6 @@ export default function Philosophy() {
                               {con.whyItMatters}
                             </p>
                           </div>
-                          {/* Col 2: Approach */}
                           <div className="space-y-2">
                             <h4 className="font-mono text-[9px] text-text-secondary uppercase tracking-widest font-bold">
                               How I Approach It
@@ -305,7 +368,6 @@ export default function Philosophy() {
                               {con.howIApproachIt}
                             </p>
                           </div>
-                          {/* Col 3: Tech / Examples */}
                           <div className="space-y-2 bg-[#FAF9F6] border border-border-custom/60 p-4 rounded-sm">
                             <h4 className="font-mono text-[9px] text-accent-cobalt uppercase tracking-widest font-bold">
                               Systems Implementation
@@ -318,26 +380,25 @@ export default function Philosophy() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
 
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 // ------------------------------------------------------------------
-// Sticky SVGs & Sub-visual animations (pure inline graphics)
+// Sub-visual elements (SVGs & motion lines)
 // ------------------------------------------------------------------
 
 function ModelVisual() {
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
       <div className="relative w-20 h-20 flex items-center justify-center">
-        {/* Pulsing Concentric waves */}
         <motion.div
           animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
@@ -368,7 +429,6 @@ function ContextVisual() {
           <span>Vector DB</span>
         </div>
         <div className="flex-1 h-[2px] border-t border-dashed border-border-custom relative mx-2">
-          {/* Pulsing data dots */}
           <motion.div
             animate={{ left: ["0%", "100%"] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
@@ -407,7 +467,6 @@ function StateVisual() {
           <span className="block text-[6px] text-text-secondary">Editor state</span>
         </div>
         <div className="flex flex-col items-center justify-center px-2 flex-1 relative h-10">
-          {/* Left Arrow Sync */}
           <motion.div
             animate={{ x: [-15, 15], opacity: [0, 1, 0] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}

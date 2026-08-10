@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, HelpCircle, AlertTriangle, Lightbulb } from "lucide-react";
+import { ChevronDown, AlertTriangle, HelpCircle, Lightbulb } from "lucide-react";
 
 export default function Decisions() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedCardIdx, setExpandedCardIdx] = useState<number | null>(null);
 
   const decisions = [
     {
+      num: "01",
       project: "CodeSync.ai",
       choice: "Hybrid Delta Engine + Yjs CRDTs",
       label: "Distributed State",
@@ -19,6 +20,7 @@ export default function Decisions() {
       whenToUse: "When building collaborative developer tools, shared editor canvases, or whiteboards requiring multi-user text merges with high availability."
     },
     {
+      num: "02",
       project: "AI PR Review Bot",
       choice: "Chunk-Level AST Hashing vs. File-Level Caching",
       label: "Compute Optimization",
@@ -29,6 +31,7 @@ export default function Decisions() {
       whenToUse: "When running automated code analysis, security auditing, or linting jobs where API tokens scale with commit volume."
     },
     {
+      num: "03",
       project: "AI PR Review Bot",
       choice: "ARQ Queue & Asyncio Webhook Receivers",
       label: "Asynchronous Queueing",
@@ -39,6 +42,7 @@ export default function Decisions() {
       whenToUse: "When building event-driven API gateways, webhook listeners, or message receivers that interface with slower downstream APIs."
     },
     {
+      num: "04",
       project: "Ops Agent Hub",
       choice: "FastMCP Tool Separation vs. Hardcoded Clients",
       label: "Decoupled Orchestration",
@@ -50,26 +54,9 @@ export default function Decisions() {
     }
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 } as any
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
-    }
-  };
-
   return (
     <section id="decisions" className="py-24 border-t border-border-custom bg-bg-base">
-      <div className="max-w-6xl mx-auto px-6 space-y-16">
+      <div className="max-w-4xl mx-auto px-6 space-y-16">
         
         {/* Section Header */}
         <div className="space-y-4 max-w-2xl">
@@ -77,79 +64,76 @@ export default function Decisions() {
             04 / Architecture Logs
           </span>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-text-primary font-sans leading-tight">
-            Engineering Decisions & Trade-offs
+            Engineering Decisions &amp; Trade-offs
           </h2>
-          <p className="text-sm sm:text-base text-text-secondary font-sans font-light leading-relaxed">
-            Real software systems require selecting architectures based on practical constraints, resource limits, and latency budgets. Click a decision to expand the logs.
+          <p className="text-sm text-text-secondary font-sans font-light leading-relaxed">
+            Real software systems require selecting architectures based on practical constraints, resource limits, and latency budgets. Cards stack progressively as you scroll.
           </p>
         </div>
 
-        {/* Decisions Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        >
+        {/* Stacked Cards Container */}
+        <div className="relative space-y-12 pb-16">
           {decisions.map((dec, idx) => {
-            const isExpanded = expandedIndex === idx;
+            const isExpanded = expandedCardIdx === idx;
+            
             return (
-              <motion.div
+              <div
                 key={dec.choice}
-                variants={itemVariants}
-                onClick={() => setExpandedIndex(isExpanded ? null : idx)}
-                className={`border rounded-sm p-6 cursor-pointer select-none transition-all duration-300 flex flex-col justify-between ${
-                  isExpanded 
-                    ? "border-text-primary bg-stone-50/50 shadow-sm" 
-                    : "border-border-custom bg-bg-base/30 hover:border-text-secondary"
-                }`}
+                className="sticky bg-bg-base border border-border-custom hover:border-text-secondary rounded-sm p-6 sm:p-8 shadow-md transition-all duration-300 cursor-pointer select-none"
+                style={{
+                  top: `${110 + idx * 16}px`,
+                  zIndex: idx,
+                }}
+                onClick={() => setExpandedCardIdx(isExpanded ? null : idx)}
               >
-                <div className="space-y-4">
-                  {/* Card Header Meta */}
+                <div className="space-y-6">
+                  
+                  {/* Card Header */}
                   <div className="flex items-center justify-between text-[9px] font-mono">
-                    <span className="text-accent-cobalt font-bold uppercase tracking-wider">
-                      {dec.project}
-                    </span>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-accent-cobalt font-bold">{dec.num}</span>
+                      <span className="text-text-secondary uppercase">{dec.project}</span>
+                    </div>
                     <span className="text-text-secondary border border-border-custom px-1.5 py-0.5 rounded-sm">
                       {dec.label}
                     </span>
                   </div>
 
-                  {/* Choice Title */}
+                  {/* Decision choice */}
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-base font-semibold text-text-primary font-sans leading-tight">
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary font-sans leading-tight">
                       {dec.choice}
                     </h3>
                     <ChevronDown
-                      size={16}
+                      size={18}
                       className={`text-text-secondary flex-shrink-0 transition-transform duration-300 mt-1 ${
                         isExpanded ? "transform rotate-180 text-accent-cobalt" : ""
                       }`}
                     />
                   </div>
 
-                  {/* Why / Impact Statement */}
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider block">
-                      The Objective
-                    </span>
-                    <p className="text-xs text-text-primary font-sans font-medium leading-relaxed">
-                      {dec.why}
-                    </p>
+                  {/* upfront description */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider block">
+                        The Objective
+                      </span>
+                      <p className="text-text-primary font-sans font-medium leading-relaxed">
+                        {dec.why}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider block">
+                        The Constraint
+                      </span>
+                      <p className="text-text-secondary font-sans font-light leading-relaxed">
+                        {dec.problem}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Problem Description */}
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider block">
-                      The Constraint
-                    </span>
-                    <p className="text-xs text-text-secondary leading-relaxed font-sans font-light">
-                      {dec.problem}
-                    </p>
-                  </div>
-
-                  {/* Expanded log panels */}
+                  {/* Expanding detailed log */}
                   <AnimatePresence initial={false}>
                     {isExpanded && (
                       <motion.div
@@ -157,42 +141,42 @@ export default function Decisions() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden space-y-4 pt-4 border-t border-border-custom/50 mt-4 text-xs"
+                        className="overflow-hidden space-y-4 pt-6 border-t border-border-custom/50 text-xs sm:text-sm"
                       >
-                        {/* Trade-off detail */}
-                        <div className="flex items-start space-x-2.5">
-                          <AlertTriangle size={14} className="text-accent-alert flex-shrink-0 mt-0.5" />
+                        {/* Trade-off */}
+                        <div className="flex items-start space-x-3">
+                          <AlertTriangle size={16} className="text-accent-alert flex-shrink-0 mt-0.5" />
                           <div className="space-y-1">
-                            <span className="font-mono text-[9px] text-text-secondary uppercase tracking-wider block">
+                            <span className="font-mono text-[9px] text-text-secondary uppercase tracking-wider block font-bold">
                               Trade-off Details
                             </span>
-                            <p className="text-text-secondary leading-relaxed font-light">
+                            <p className="text-text-secondary leading-relaxed font-sans font-light">
                               {dec.tradeoff}
                             </p>
                           </div>
                         </div>
 
                         {/* Alternative */}
-                        <div className="flex items-start space-x-2.5">
-                          <HelpCircle size={14} className="text-text-secondary flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start space-x-3">
+                          <HelpCircle size={16} className="text-text-secondary flex-shrink-0 mt-0.5" />
                           <div className="space-y-1">
-                            <span className="font-mono text-[9px] text-text-secondary uppercase tracking-wider block">
+                            <span className="font-mono text-[9px] text-text-secondary uppercase tracking-wider block font-bold">
                               Alternative Evaluated
                             </span>
-                            <p className="text-text-secondary leading-relaxed font-light">
+                            <p className="text-text-secondary leading-relaxed font-sans font-light">
                               {dec.alternative}
                             </p>
                           </div>
                         </div>
 
                         {/* When to use */}
-                        <div className="flex items-start space-x-2.5">
-                          <Lightbulb size={14} className="text-accent-success flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start space-x-3">
+                          <Lightbulb size={16} className="text-accent-success flex-shrink-0 mt-0.5" />
                           <div className="space-y-1">
-                            <span className="font-mono text-[9px] text-accent-success uppercase tracking-wider block">
-                              When I would use this
+                            <span className="font-mono text-[9px] text-accent-success uppercase tracking-wider block font-bold">
+                              When to deploy this
                             </span>
-                            <p className="text-text-secondary leading-relaxed font-light">
+                            <p className="text-text-secondary leading-relaxed font-sans font-light">
                               {dec.whenToUse}
                             </p>
                           </div>
@@ -200,11 +184,12 @@ export default function Decisions() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+
                 </div>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
 
       </div>
     </section>
